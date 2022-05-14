@@ -63,14 +63,32 @@ namespace Assignment
                     search = driver.FindElement(By.XPath("//input[@value='search']"));
                     search.Click();
 
-                    // Write to file
+                    // Get table
 
-                    String c = driver.FindElement(By.XPath("/html/body/table[2]")).Text;
+                    string toWrite = "";
+                    string currentRow = "";
+
+                    var table = driver.FindElement(By.XPath("/html/body/table[2]"));
+                    var rows = table.FindElements(By.TagName("tr"));
+
+                    foreach (var row in rows)
+                    {
+                        var rowTds = row.FindElements(By.TagName("td"));
+                        currentRow = "";
+                        foreach (var td in rowTds)
+                        {
+                            currentRow = currentRow + td.Text + ",";
+                        }
+                        toWrite += currentRow.Substring(0, currentRow.Length - 1);
+                        toWrite += System.Environment.NewLine;
+                    }
+
+                    // Write to file
 
                     string fileName = currencies[i] + "_" + TwoDaysAgo + "_To_" + currentDate + ".txt";
                     using (StreamWriter writer = new StreamWriter(fileName))
                     {
-                        writer.WriteLine(c);
+                        writer.WriteLine(toWrite);
                     }
 
 
